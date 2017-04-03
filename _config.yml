@@ -2,3 +2,4 @@ theme: jekyll-theme-slate
 title: 'NLP by Your Friend Liam'
 author: Liam Geron
 paginate: 3
+markdown: kramdown
