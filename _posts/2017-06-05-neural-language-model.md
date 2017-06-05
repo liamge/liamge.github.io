@@ -37,35 +37,35 @@ We will break the implementation itself up into the constituent parts that the p
 
 For this section we need to be able to create a trainable `|V| x d` matrix, where `|V|` is the size of our vocabulary and `d` is the dimensionality we want our word feature vectors to be. Luckily, in tensorflow this is super easy.
 
-`
+```
 import tensorflow as tf
 import numpy as np
 
 embed_matrix = tf.Variable(tf.random_uniform([self.data.V, self.conf.embed_dim], -1.0, 1.0),name='embed_matrix')
-`
+```
 
 And it's that easy! The variable in tensorflow is a trainable tensor that will be updated in our optimization step later on. We initialized it with a sample from the random uniform distribution between -1 and 1 using the extra handy `tf.random_uniform` function. Now how do we use this matrix? Well we want to be able to say that the word "cat" corresponds to the 425th row of the `embed_matrix`, and so first we need to associate each word in the vocabulary with an index. This can be easily achieved with:
 
-`
+```
 V = set(corpus)
 
 idx2w = {i:w for (i, w) in enumerate(V)}
 w2idx = {w:i for (i, w) in enumerate(V)}
-`
+```
 
 Once we can get our corpus into an indexical format, we can then use the other super handy tensorflow function `tf.nn.embed_lookup` to select only the rows from our embedding matrix that we feed it the indexes for. More concretely, for any given batch if we have it in index form:
 
-`
+```
 train_inputs = tf.placeholder(tf.float32, shape=[batch_size, num_steps])
 train_labels = tf.placeholder(tf.float32, shape=[batch_size, 1])
 
 embed_inputs = tf.nn.embed_lookup(embed_matrix, train_inputs)
 input = tf.reshape(embed_inputs, (batch_size, num_steps * embed_dim))
-`
+```
 
 where num_steps = the size of the window of words you want to predict from and batch_size is the size of your minibatches. A tensorflow placeholder is an empty tensor which is defined later on when the graph is being run on actual data, hence why we don't initialize it to any set value. When we train we will "fill" these placeholders with actual values once we can batch our data. The end product of all of this is our `embed_inputs` variable which will be a 3d tensor of shape batch_size x num_steps x embed_dim where each input sequence is transformed into a 2d matrix of shape num_steps x embed_dim. What we then want to do is concatenate these matrices into an array of shape num_steps * embed_dim to end up with a final 2d matrix of shape batch_size x num_steps * embed_dim. The final code for this section looks like:
 
-`
+```
 import tensorflow as tf
 import numpy as np
 
@@ -81,6 +81,6 @@ train_labels = tf.placeholder(tf.float32, shape=[batch_size, 1])
 
 embed_inputs = tf.nn.embed_lookup(embed_matrix, train_inputs)
 input = tf.reshape(embed_inputs, (batch_size, num_steps * embed_dim))
-`
+```
 Not so bad for 15 or so lines of code!
 
