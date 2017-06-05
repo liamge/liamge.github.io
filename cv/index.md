@@ -1,3 +1,3 @@
-![resume](/images/resume.jpg)
+![resume](/assets/resume.jpg)
 
-Download [here](https://github.com/liamge/liamge.github.io/raw/master/images/resume.jpg)
+Download [here](https://github.com/liamge/liamge.github.io/raw/master/assets/resume.jpg)
