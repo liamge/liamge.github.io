@@ -1,3 +1,5 @@
 Temporary placeholder while I get my CV in order.
 
-![Me](/images/me.jpg)
+Download [here](https://github.com/liamge/liamge.github.io/raw/master/images/resume.jpg)
+
+![resume](/images/resume.jpg)
