@@ -28,7 +28,9 @@ The solution to this problem as proposed in [Bengio et al., 2003](http://www.jml
 We will break the implementation itself up into the constituent parts that the paper outlines:
 
 "
-1. Associate each word in the vocabulary with a distributed _word feature vector_ (a real-valued vector in R^m), 2. Express the joint _probability function_ of word sequences in terms of the feature vectors of these words in the sequence, and 3. Learn simultaneously the _word feature vectors_ and the parameters of that _probability function_. 
+1. Associate each word in the vocabulary with a distributed _word feature vector_ (a real-valued vector in R^m), 
+2. Express the joint _probability function_ of word sequences in terms of the feature vectors of these words in the sequence, and 
+3. Learn simultaneously the _word feature vectors_ and the parameters of that _probability function_. 
 " - (Bengio et al., 2003, pg. 3)
 
 
