@@ -112,10 +112,10 @@ The next step is where we predict the next word from this hidden state. We want 
 
 
 
-`U = tf.Variable(tf.random_uniform([hidden_dim, len(V)]))
-b = tf.Variable(tf.constant([len(V)], 1.0))
+`U = tf.Variable(tf.random_uniform([hidden_dim, len(V)]))`
+`b = tf.Variable(tf.constant([len(V)], 1.0))`
 
-hidden2out = tf.matmul(hidden, U) + b`
+`hidden2out = tf.matmul(hidden, U) + b`
 
 
 
