@@ -110,6 +110,7 @@ Let's deconstruct this. We're initializing two trainable variables, `H` and `d`,
 
 The next step is where we predict the next word from this hidden state. We want to be able to assign to each word in our vocabulary V a probability of it occuring after our window of words. In order to do this, we need to project our hidden state into a |V| dimensional array. If you followed what we did above, this step should be easy.
 
+
 ```
 U = tf.Variable(tf.random_uniform([hidden_dim, len(V)]))
 b = tf.Variable(tf.constant([len(V)], 1.0))
@@ -117,7 +118,9 @@ b = tf.Variable(tf.constant([len(V)], 1.0))
 hidden2out = tf.matmul(hidden, U) + b
 ```
 
+
 Now before we jump straight into the softmax, the paper introduces one more novel idea: direct connections from the input to the output layer. How do they achieve this? By adding a direct projection of the concatenated inputs to size |V| to our `hidden2out` variable. We can toggle these direct connections as well by either initializing them to non-zeros, or initializing them to zeros. 
+
 
 ```
 if direct_connections == True:
@@ -127,6 +130,7 @@ else:
     
 logits = tf.matmul(input_mat, W) + hidden2out
 ```
+
 
 And now we're finally ready for the last step. So now that we have these logits, how do we convert them to probabilities? The answer is the softmax function, packaged in `tf.nn.softmax`. What does the softmax function do? It scales all the values of our output to sum to one and reflect their relative sizes. In this way they can be interpreted as probabilities. There's a smarter way of doing this in tensorflow however, where instead of calculating the softmax values and then calculating the loss you do it all in one function:
 
