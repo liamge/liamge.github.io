@@ -68,7 +68,7 @@ input = tf.reshape(embed_inputs, (batch_size, num_steps * embed_dim))
 ```
 
 Now this might look pretty complicated at first, why are we reshaping the embed_inputs variable? And what is a placeholder? 
-A tensorflow placeholder is an empty tensor which is defined later on when the graph is being run on actual data, hence why we don't initialize it to any set value. When we train we will "fill" these placeholders with actual values once we can batch our data. So let's talk about the shapes of these matrices and why they are the way that they are. I find it's always easiest to write down the dimensions next to the variable itself to be extra prepared in case something goes wrong. So what is this num_steps variable that we're using? Num_steps refers to the window of _k_ words we want to look at in order to predict the _k_+1th word. Like the bigrams above, if _k_ = 2 then we are predicting the word that follows every pair of 2 words. In practice this is a bottleneck, so try brainstorming some possibile solutions to this! They'll get incorporated to our code in a future post. So if we think of our batch as having 10 examples of _k_ words, we can represent that as a 10 x _k_ matrix of indexes. The next part is going to get a little heavy, so bear with me. `tf.nn.embed_lookup` is a function that takes a tensor and a series of indices to select from that tensor. For example, if we feed `tf.nn.embed_lookup` both `embed_matrix` and `[1, 15, 4]`, it will give us back a matrix where the first row is the 1st row of `embed_matrix`, the 2nd row is the 15th row, and the 3rd is the 4th row. Remember that each row of `embed_matrix` has _d_ dimensions, and so our final matrix will be of the shape _number-of-indices-fed-to-embed_lookup_ x _d_. So now let's think about what happens when you feed `embed_lookup` a matrix of indices rather than a vector. Each row of our index matrix will be treated the exact same as our vector example above, and so each row of our index matrix will result in a 2d matrix. That means our final result will be a 3d matrix where each index row corresponds to a 2d matrix of vectors representing those words. For our purposes this extra dimension will only complicate things, so we can concatenate all of the word vectors in our window of _k_ words together (see figure below). This is what our reshaping step is. We are just concatenating the 2d matrices in our 3d matrix into arrays, resulting in a nice workable 2d matrix. This final matrixes shape will be batch_size x _k_ * _d_. If you don't get that right away don't worry about it, experiment with the data structures for a little bit in a jupyter notebook and see if you can convince yourself that these dimensionalities are what we want. 
+A tensorflow placeholder is an empty tensor which is defined later on when the graph is being run on actual data, hence why we don't initialize it to any set value. When we train we will "fill" these placeholders with actual values once we can batch our data. So let's talk about the shapes of these matrices and why they are the way that they are. So what is this num_steps variable that we're using? Num_steps refers to the window of _k_ words we want to look at in order to predict the _k_+1th word. Like the bigrams above, if _k_ = 2 then we are predicting the word that follows every pair of 2 words. In practice this is a bottleneck, so try brainstorming some possibile solutions to this! They'll get incorporated to our code in a future post. So if we think of our batch as having 10 examples of _k_ words, we can represent that as a 10 x _k_ matrix of indexes. The next part is going to get a little heavy, so bear with me. `tf.nn.embed_lookup` is a function that takes a tensor and a series of indices to select from that tensor. For example, if we feed `tf.nn.embed_lookup` both `embed_matrix` and `[1, 15, 4]`, it will give us back a matrix where the first row is the 1st row of `embed_matrix`, the 2nd row is the 15th row, and the 3rd is the 4th row. Remember that each row of `embed_matrix` has _d_ dimensions, and so our final matrix will be of the shape _number-of-indices-fed-to-embed_lookup_ x _d_. So now let's think about what happens when you feed `embed_lookup` a matrix of indices rather than a vector. Each row of our index matrix will be treated the exact same as our vector example above, and so each row of our index matrix will result in a 2d matrix. That means our final result will be a 3d matrix where each index row corresponds to a 2d matrix of vectors representing those words. For our purposes this extra dimension will only complicate things, so we can concatenate all of the word vectors in our window of _k_ words together (see figure below). This is what our reshaping step is. We are just concatenating the 2d matrices in our 3d matrix into arrays, resulting in a nice workable 2d matrix. This final matrixes shape will be batch_size x _k_ * _d_. If you don't get that right away don't worry about it, experiment with the data structures for a little bit in a jupyter notebook and see if you can convince yourself that these dimensionalities are what we want. 
 
 The final code for this section looks like:
 
@@ -90,4 +90,88 @@ embed_inputs = tf.nn.embed_lookup(embed_matrix, train_inputs)
 input = tf.reshape(embed_inputs, (batch_size, num_steps * embed_dim))
 ```
 Not so bad for 15 or so lines of code!
+
+## Joint Probability Function
+
+In this section we will be implementing the joint probability function detailed in the paper. In the diagram above we can see that so far we have completed the first layer of this graph, i.e. we have our concatenated word vectors. Now all we need to do is to define the rest of the computational graph for them to flow through. As we can see in the diagram, the concatenated word vectors flow into a hidden layer with an element-wise hyperbolic tan non-linearity applied. The full equation for the network is as follows:
+
+`y = b + Wx + Utanh(d + Hx)`
+
+Note that for this initial step we are focusing on the input -> hidden flow, which in the above equation is `tanh(d + Hx)` where `d` and `H` are our hidden parameters. If you don't know what that means, I'll refer you back to the Neural Network resource I linked [above](http://neuralnetworksanddeeplearning.com/). That is actually all we need to know to get started:
+
+```
+H = tf.Variable(tf.random_uniform([num_steps * embed_dim, hidden_dim], -1.0, 1.0))
+d = tf.Variable(tf.random_uniform([hidden_dim]))
+
+hidden = tf.tanh(tf.matmul(input_mat, H) + d)
+```
+
+Let's deconstruct this. We're initializing two trainable variables, `H` and `d`, to project our input data into a hidden state. The way this works is by matrix multiplication, where our input is of shape batch_size x _k_ * _d_, our hidden weights `H` is of shape _k_ * _d_ x hidden_dim. The result of multiplying these two shaped matrices together will result in a matrix of shape batch_size x hidden_dim, exactly what we want. If you can't see that, remember that a 2x3 matrix multiplied by a 3x8 matrix will result in a 2x8 matrix. Finally we apply our nonlinearity, handily packaged in `tf.tanh`, to the matrix multiplication (`tf.matmul`) and we get our hidden state. 
+
+The next step is where we predict the next word from this hidden state. We want to be able to assign to each word in our vocabulary V a probability of it occuring after our window of words. In order to do this, we need to project our hidden state into a |V| dimensional array. If you followed what we did above, this step should be easy.
+
+```
+U = tf.Variable(tf.random_uniform([hidden_dim, len(V)]))
+b = tf.Variable(tf.constant([len(V)], 1.0))
+
+hidden2out = tf.matmul(hidden, U) + b
+```
+
+Now before we jump straight into the softmax, the paper introduces one more novel idea: direct connections from the input to the output layer. How do they achieve this? By adding a direct projection of the concatenated inputs to size |V| to our `hidden2out` variable. We can toggle these direct connections as well by either initializing them to non-zeros, or initializing them to zeros. 
+
+```
+if direct_connections == True:
+    W = tf.Variable(tf.random_normal([embed_dim * num_steps, len(V)], -1.0, 1.0))
+else:
+    W = tf.Variable(np.zeros([embed_dim * num_steps, len(V)]), trainable=False)
+    
+logits = tf.matmul(input_mat, W) + hidden2out
+```
+
+And now we're finally ready for the last step. So now that we have these logits, how do we convert them to probabilities? The answer is the softmax function, packaged in `tf.nn.softmax`. What does the softmax function do? It scales all the values of our output to sum to one and reflect their relative sizes. In this way they can be interpreted as probabilities. There's a smarter way of doing this in tensorflow however, where instead of calculating the softmax values and then calculating the loss you do it all in one function:
+
+`loss = tf.nn.softmax_cross_entropy_with_logits(logits, labels=train_labels)`
+
+This has the advantages of being more numerically stable and condensing our code. And just like that the graph is done! We have a way of computing the loss of a given batch by having our tensors flow through our computational graph (which is nothing but a sequence of matrix multiplications). That wasn't so bad at all! The final code for the completed graph is this:
+
+```
+import tensorflow as tf
+import numpy as np
+
+V = set(corpus)
+
+idx2w = {i:w for (i, w) in enumerate(V)}
+w2idx = {w:i for (i, w) in enumerate(V)}
+
+embed_matrix = tf.Variable(tf.random_uniform([len(V), embed_dim], -1.0, 1.0),name='embed_matrix')
+
+train_inputs = tf.placeholder(tf.float32, shape=[batch_size, num_steps])
+train_labels = tf.placeholder(tf.float32, shape=[batch_size, 1])
+
+embed_inputs = tf.nn.embed_lookup(embed_matrix, train_inputs)
+input = tf.reshape(embed_inputs, (batch_size, num_steps * embed_dim))
+
+H = tf.Variable(tf.random_uniform([num_steps * embed_dim, hidden_dim], -1.0, 1.0))
+d = tf.Variable(tf.random_uniform([hidden_dim]))
+
+hidden = tf.tanh(tf.matmul(input_mat, H) + d)
+
+U = tf.Variable(tf.random_uniform([hidden_dim, len(V)]))
+b = tf.Variable(tf.constant([len(V)], 1.0))
+
+hidden2out = tf.matmul(hidden, U) + b
+
+if direct_connections == True:
+    W = tf.Variable(tf.random_normal([embed_dim * num_steps, len(V)], -1.0, 1.0))
+else:
+    W = tf.Variable(np.zeros([embed_dim * num_steps, len(V)]), trainable=False)
+    
+logits = tf.matmul(input_mat, W) + hidden2out
+
+loss = tf.nn.softmax_cross_entropy_with_logits(logits, labels=train_labels)
+```
+
+And there's a full neural network in 30-ish lines of code! Pretty amazing what modern deep learning frameworks can do for us.
+
+## Train
 
