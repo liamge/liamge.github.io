@@ -106,20 +106,20 @@ d = tf.Variable(tf.random_uniform([hidden_dim]))
 hidden = tf.tanh(tf.matmul(input_mat, H) + d)
 ```
 
-Let's deconstruct this. We're initializing two trainable variables, `H` and `d`, to project our input data into a hidden state. The way this works is by matrix multiplication, where our input is of shape batch_size x _k_ * _d_, our hidden weights `H` is of shape _k_ * _d_ x hidden_dim. The result of multiplying these two shaped matrices together will result in a matrix of shape batch_size x hidden_dim, exactly what we want. If you can't see that, remember that a 2x3 matrix multiplied by a 3x8 matrix will result in a 2x8 matrix. Finally we apply our nonlinearity, handily packaged in `tf.tanh`, to the matrix multiplication (`tf.matmul`) and we get our hidden state. 
+Let's deconstruct this. We're initializing two trainable variables, `H` and `d`, to project our input data into a hidden state. The way this works is by matrix multiplication, where our input is of shape batch_size x _k_ * _d_, our hidden weights `H` is of shape _k_ * _d_ x hidden_dim. The result of multiplying these two shaped matrices together will result in a matrix of shape batch_size x hidden_dim, exactly what we want. If you can't see that, remember that a 2x3 matrix multiplied by a 3x8 matrix will result in a 2x8 matrix. Finally we apply our nonlinearity, handily packaged in `tf.tanh`, to the matrix multiplication (`tf.matmul`) and we get our hidden state.
 
-The next step is where we predict the next word from this hidden state. We want to be able to assign to each word in our vocabulary V a probability of it occuring after our window of words. In order to do this, we need to project our hidden state into a |V| dimensional array. If you followed what we did above, this step should be easy.
-
-
-
-`U = tf.Variable(tf.random_uniform([hidden_dim, len(V)]))`
-`b = tf.Variable(tf.constant([len(V)], 1.0))`
-
-`hidden2out = tf.matmul(hidden, U) + b`
+The next step is where we predict the next word from this hidden state. We want to be able to assign to each word in our vocabulary `V` a probability of it occuring after our window of words. In order to do this, we need to project our hidden state into a `|V|` dimensional array. If you followed what we did above, this step should be easy.
 
 
+```
+U = tf.Variable(tf.random_uniform([hidden_dim, len(V)]))
+b = tf.Variable(tf.constant([len(V)], 1.0))
 
-Now before we jump straight into the softmax, the paper introduces one more novel idea: direct connections from the input to the output layer. How do they achieve this? By adding a direct projection of the concatenated inputs to size |V| to our `hidden2out` variable. We can toggle these direct connections as well by either initializing them to non-zeros, or initializing them to zeros. 
+hidden2out = tf.matmul(hidden, U) + b
+```
+
+
+Now before we jump straight into the softmax, the paper introduces one more novel idea: direct connections from the input to the output layer. How do they achieve this? By adding a direct projection of the concatenated inputs to size `|V|` to our `hidden2out` variable. We can toggle these direct connections as well by either initializing them to non-zeros, or initializing them to zeros. 
 
 
 ```
