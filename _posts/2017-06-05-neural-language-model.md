@@ -45,7 +45,7 @@ For this section we need to be able to create a trainable `|V| x d` matrix, wher
 import tensorflow as tf
 import numpy as np
 
-embed_matrix = tf.Variable(tf.random_uniform([self.data.V, self.conf.embed_dim], -1.0, 1.0),name='embed_matrix')
+embed_matrix = tf.Variable(tf.random_uniform([len(V), embed_dim], -1.0, 1.0),name='embed_matrix')
 ```
 
 And it's that easy! The variable in tensorflow is a trainable tensor that will be updated in our optimization step later on. We initialized it with a sample from the random uniform distribution between -1 and 1 using the extra handy `tf.random_uniform` function. Now how do we use this matrix? Well we want to be able to say that the word "cat" corresponds to the 425th row of the `embed_matrix`, and so first we need to associate each word in the vocabulary with an index. This can be easily achieved with:
@@ -81,7 +81,7 @@ V = set(corpus)
 idx2w = {i:w for (i, w) in enumerate(V)}
 w2idx = {w:i for (i, w) in enumerate(V)}
 
-embed_matrix = tf.Variable(tf.random_uniform([self.data.V, self.conf.embed_dim], -1.0, 1.0),name='embed_matrix')
+embed_matrix = tf.Variable(tf.random_uniform([len(V), embed_dim], -1.0, 1.0),name='embed_matrix')
 
 train_inputs = tf.placeholder(tf.float32, shape=[batch_size, num_steps])
 train_labels = tf.placeholder(tf.float32, shape=[batch_size, 1])
