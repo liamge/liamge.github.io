@@ -33,6 +33,10 @@ We will break the implementation itself up into the constituent parts that the p
 
 -- (Bengio et al., 2003, pg. 3)
 
+Here is a diagram of the whole network in place:
+
+![](/assets/bengio_fig_1.png)
+
 ## Part 1: Word Feature Vectors
 
 For this section we need to be able to create a trainable `|V| x d` matrix, where `|V|` is the size of our vocabulary and `d` is the dimensionality we want our word feature vectors to be. Luckily, in tensorflow this is super easy.
@@ -63,7 +67,10 @@ embed_inputs = tf.nn.embed_lookup(embed_matrix, train_inputs)
 input = tf.reshape(embed_inputs, (batch_size, num_steps * embed_dim))
 ```
 
-where num_steps = the size of the window of words you want to predict from and batch_size is the size of your minibatches. A tensorflow placeholder is an empty tensor which is defined later on when the graph is being run on actual data, hence why we don't initialize it to any set value. When we train we will "fill" these placeholders with actual values once we can batch our data. The end product of all of this is our `embed_inputs` variable which will be a 3d tensor of shape batch_size x num_steps x embed_dim where each input sequence is transformed into a 2d matrix of shape num_steps x embed_dim. What we then want to do is concatenate these matrices into an array of shape num_steps * embed_dim to end up with a final 2d matrix of shape batch_size x num_steps * embed_dim. The final code for this section looks like:
+Now this might look pretty complicated at first, why are we reshaping the embed_inputs variable? And what is a placeholder? 
+A tensorflow placeholder is an empty tensor which is defined later on when the graph is being run on actual data, hence why we don't initialize it to any set value. When we train we will "fill" these placeholders with actual values once we can batch our data. So let's talk about the shapes of these matrices and why they are the way that they are. I find it's always easiest to write down the dimensions next to the variable itself to be extra prepared in case something goes wrong. So what is this num_steps variable that we're using? Num_steps refers to the window of _k_ words we want to look at in order to predict the _k_+1th word. Like the bigrams above, if _k_ = 2 then we are predicting the word that follows every pair of 2 words. In practice this is a bottleneck, so try brainstorming some possibile solutions to this! They'll get incorporated to our code in a future post. So if we think of our batch as having 10 examples of _k_ words, we can represent that as a 10 x _k_ matrix of indexes. The next part is going to get a little heavy, so bear with me. `tf.nn.embed_lookup` is a function that takes a tensor and a series of indices to select from that tensor. For example, if we feed `tf.nn.embed_lookup` both `embed_matrix` and `[1, 15, 4]`, it will give us back a matrix where the first row is the 1st row of `embed_matrix`, the 2nd row is the 15th row, and the 3rd is the 4th row. Remember that each row of `embed_matrix` has _d_ dimensions, and so our final matrix will be of the shape _number-of-indices-fed-to-embed_lookup_ x _d_. So now let's think about what happens when you feed `embed_lookup` a matrix of indices rather than a vector. Each row of our index matrix will be treated the exact same as our vector example above, and so each row of our index matrix will result in a 2d matrix. That means our final result will be a 3d matrix where each index row corresponds to a 2d matrix of vectors representing those words. For our purposes this extra dimension will only complicate things, so we can concatenate all of the word vectors in our window of _k_ words together (see figure below). This is what our reshaping step is. We are just concatenating the 2d matrices in our 3d matrix into arrays, resulting in a nice workable 2d matrix. This final matrixes shape will be batch_size x _k_ * _d_. If you don't get that right away don't worry about it, experiment with the data structures for a little bit in a jupyter notebook and see if you can convince yourself that these dimensionalities are what we want. 
+
+The final code for this section looks like:
 
 ```
 import tensorflow as tf
