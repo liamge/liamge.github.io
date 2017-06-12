@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Learning to Implement Papers: Neural Language Model in Tensorflow from Scratch"
+title: "Learning to Implement Papers: Neural Language Model in Tensorflow"
 date: 2017-06-05
 comments: true
 ---
