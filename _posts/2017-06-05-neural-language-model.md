@@ -179,3 +179,50 @@ And there's a full neural network in 30-ish lines of code! Pretty amazing what m
 
 ## Train
 
+Time for some more hyperparameters, like the number of times you want to do a full set of mini-batches (also known as an epoch), because that will be how we know how long to train our network for. The whole training step is pretty simple actually, but before we get into that we have to talk about the `tf.Session()` object. The `tf.Session()` object is essentially what we use to run any part of the network. Before that, all we have is our computational graph. The reason Tensorflow separates these two steps is a little complicated; essentially you want your large computations to be run in a much faster language than Python, like C++ for example, so that you can save lots of time when training your network. Theoretically you could just say, "Hey program, for every computation switch over to C++ and run that computation and store the result in Python", but the overhead of switching from Python to C++ is actually pretty large, so Tensorflow breaks up the two steps. We first define our computational graph so that Tensorflow knows _what_ to compute in C++, then we runn the actual program with the `tf.Session()` object. The syntax is like this:
+
+```
+with tf.Session() as sess:
+    feed_dict = {train_inputs: batch_x, train_labels: batch_y}
+    sess.run(loss, feed_dict=feed_dict)
+```
+
+We use the `feed_dict` object to feed values to the placeholders we defined in our graph. From there that's all Tensorflow needs to compute the `loss` variable, and it will do so in that block of code. Just calculating the loss isn't enough though, we need to add an optimizer to our computational graph that will update our parameters to minimize our loss. We can do that very easily in Tensorflow:
+
+```
+optimizer = tf.train.GradientDescentOptimizer(lr).minimize(loss)
+```
+
+Where we have some learning rate `lr` (if you don't know what a learning rate is, there is a great tutorial on SGD [here](http://ufldl.stanford.edu/tutorial/supervised/OptimizationStochasticGradientDescent/)), and we specify that it should minimize our loss variable. And just like that, when we run:
+
+```
+with tf.Session() as sess:
+    feed_dict = {train_inputs: batch_x, train_labels: batch_y}
+    sess.run(optimizer, feed_dict=feed_dict)
+```
+
+That's a full training step! All we have to do is then run it for every batch, for every epoch and we get our full trained network. The full code for training our network is below.
+
+```
+with tf.Session() as sess:
+    for i in range(num_epochs):
+        epoch_loss = 0.0
+        total_loss = 0.0
+        for j in range(num_batches):
+            batch_x, batch_y = load_next_batch(data)
+            feed_dict = {train_inputs: batch_x, train_labels: batch_y}
+            loss, _ = sess.run([loss, optimizer], feed_dict=feed_dict)
+            batch_loss += loss
+            epoch_loss += loss
+            if (j + 1) % 1000 == 0:
+                print("Average loss at step {}: {:5.1f}".format(j, batch_loss / 1000))
+                batch_loss = 0.0
+        print("Average epoch loss at epoch {}: {:5.1f}".format(i, epoch_loss / num_batches))
+        epoch_loss = 0.0
+```
+
+Try and figure out what I'm doing with my loss logging. An alternative option to doing this would be to use Tensorboard, the amazing visualization tool that Tensorflow provides. You can find some great documentation on it [here](https://www.tensorflow.org/get_started/summaries_and_tensorboard). You're far from done at this point, even though what we wrote above here could work as a barebones Neural Language Model. You can still improve it a great deal with cross validation evaluation, a more sophisticated optimizer, Tensorboard visualizations, model checkpointing, and regularization to name a few. Unfortunately I can't cover all the advanced Tensorflow techniques in this "short" (although quite long at this point) blog post. But if you feel like you have a grip on everything we covered above, then you won't find the rest hard, just start digging through Tensorflow's documentation!
+
+# Recap
+
+In this blog post I (briefly) outlined how one could go about reproducing a Deep Learning paper using Tensorflow. We succesfully implemented the entirety of [Bengio et al., 2003](http://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf) in a few short lines of code, something that would have practically required a Ph.D back then. I always found that paper reproduction is the best way of understanding and learning what really goes on within a paper, so I encourage you to find a paper that really excites you and work on reproducing it! When you really get into what is going on it isn't so hard under the hood in Tensorflow. If you have any comments, questions, things to yell at me, or edit suggestions please post them down below in the comments section.
