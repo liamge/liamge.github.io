@@ -5,7 +5,7 @@ date: 2017-06-23
 comments: true
 ---
 
-__Disclaimer__: This post will be using Tensorflow and the classic bunch of Python scientific libraries (i.e. numpy, sklearn, pandas, etc.). If you're unfamiliar with these, I'd recommend working through the code in here on your own jupyter notebook to really gain a familiarity with these libraries. They're insanely usefull for most of what you'd ever want to do.
+__Disclaimer__: This post will be using the classic bunch of Python scientific libraries (i.e. numpy, sklearn, pandas, etc.). If you're unfamiliar with these, I'd recommend working through the code in here on your own jupyter notebook to really gain a familiarity with these libraries. They're insanely usefull for most of what you'd ever want to do.
 
 # Intro
 
