@@ -230,36 +230,13 @@ plt.ylabel('predicted')
 plt.xlabel('actual')
 plt.title('XGB Matrix')
 
-print("F1 score: {}".format(f1_score(preds, y_res)))
+print("F1 score: {}".format(f1_score(preds, y_train)))
 ```
 
-Not great. It actually almost never predicts that a comment is made by a liberal. Let's see if we can alleviate this problem using a technique known as [Oversampling](http://contrib.scikit-learn.org/imbalanced-learn/auto_examples/over-sampling/plot_random_over_sampling.html), which randomly samples our minority class in order to balance the dataset. More specifically we're using a variant called [SMOTE](http://contrib.scikit-learn.org/imbalanced-learn/generated/imblearn.over_sampling.SMOTE.html).
+Not great. It actually almost never predicts that a comment is made by a liberal. One advantage to using XGB is it can give us an estimate of the feature importances. Let's visualize them:
 
 ```
-from imblearn.over_sampling import SMOTE
-
-os = SMOTE(random_state=42)
-
-X_res, y_res = os.fit_sample(X_train.toarray(), y_train)
-
-xgb_clf = XGBClassifier()
-
-preds = cross_val_predict(xgb_clf, X_res, y_res)
-
-mat = confusion_matrix(y_res, preds)
-
-plt.matshow(mat)
-plt.ylabel('predicted')
-plt.xlabel('actual')
-plt.title('XGB Resampled Matrix')
-
-print("F1 score: {}".format(f1_score(preds, y_res)))
-```
-
-This does much much better! But not everything is as it seems. When we oversample our minority class our powerful model may just be memorizing the instances that it is resampling. It's doubtful that this would generalize well. One advantage to using XGB is it can give us an estimate of the feature importances. Let's visualize them:
-
-```
-clf = XGBClassifier().fit(X_res, y_res)
+clf = XGBClassifier().fit(X_train, y_train)
 
 word_idx = list(text_pipeline.named_steps['counts'].vocabulary_.items())
 sorted_words = [w[0] for w in sorted(word_idx, key=lambda x: x[1])]
@@ -273,7 +250,7 @@ print(sorted_importances[:50])
 
 Makes a lot of sense, these are pretty charged and polarizing words. That's pretty encouraging that our model can pick up on all of this from just word counts! 
 
-Now let's see what ensembling our three models gets us. 
+Now let's see what ensembling our three models gets us. It may alleviate this underprediction problem.
 
 ```
 from sklearn.ensemble import VotingClassifier
@@ -290,9 +267,9 @@ clf3 = XGBClassifier()
 
 eclf = VotingClassifier(estimators=[('nb', clf1), ('qda', clf2), ('xgb', clf3)], voting='soft')
 
-preds = cross_val_predict(eclf, X_res, y_res)
+preds = cross_val_predict(eclf, X_train, y_train)
 
-mat = confusion_matrix(y_res, preds)
+mat = confusion_matrix(y_train, preds)
 
 plt.matshow(mat)
 
@@ -317,7 +294,7 @@ param_dist = {"nb__svd__n_components": sp_randint(2, 1000),
 n_iter_search = 20
 random_search = RandomizedSearchCV(eclf, param_distributions=param_dist,
                                    n_iter=n_iter_search)
-random_search.fit(X_res, y_res)
+random_search.fit(X_train, y_train)
 ```
 
 Warning, this is going to take a really long time to run since it's training the entire ensemble a huge amount of times! Much like this syntax, you can fine tune more precisely with `GridSearchCV`, but I'll leave that as an exercise to the reader. Note that we aren't tuning a huge amount of hyperparameters because I have a feeling that this isn't going to be our final solution (*cough* word vectors *cough*) for this dataset, so I don't feel like investing the huge compute time required for hyperparameter tuning.
@@ -331,9 +308,10 @@ print("Accuracy: {}".format(accuracy_score(preds, y_test)))
 print("Precision: {}".format(precision_score(preds, y_test)))
 print("Recall: {}".format(recall_score(preds, y_test)))
 print("F1: {}".format(f1_score(preds, y_test)))
+print(confusion_matrix(y_test, preds))
 ```
 
-Not terrible, but certainly not great by any stretch of the imagination. 
+Not terrible, but certainly not great by any stretch of the imagination. It still has trouble accurately predicting when a comment is liberal.
 
 # Final Notes
 
