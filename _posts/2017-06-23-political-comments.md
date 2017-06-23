@@ -13,7 +13,7 @@ Before I jump into it, I just want to say that this post isn't intended to speak
 
 # Data
 
-So here comes key assumption #1: I got all the data from the r/Conservative and r/Liberal subreddits using the Reddit API wrapper [PRAW](https://praw.readthedocs.io/en/latest). Now of the litany of biases that this introduces, one of these is that r/Conservative has approximately 3x the subscribers as r/Liberal does, introducing a significant difference in the quality of the data that we can get from each subreddit. The smaller size of r/Liberal means that we have to comb further back in time to get a comparable amount of data as we can from r/Conservative, meaning we may simply be modelling a topical difference rather than what we actually want to model: the difference between the way each party uses language to approach a problem. While having an unbalanced dataset is definitely a problem we may have to tackle, it may be worth controlling for the date a comment was posted. Aside from this, we make another potentially deadly assumption: that only conservatives post on r/Conservative and only liberals post on r/Liberal. We can potentially alleviate the severity of this problem by introducing a threshold of the amount of upvotes a coment gets before we include it in the data, relying on the majority of the _voters_ of each subreddit to be the political affiliation of the subreddit they are in, which seems like a much more reasonable assumption. The code for the PRAW scraper is included in the github repository for this post (here)[to be filled]. For the sake of this post I'll assume you've ran the scraper on both subreddits and so have two csvs that we'll use as our data.
+So here comes key assumption #1: I got all the data from the r/Conservative and r/Liberal subreddits using the Reddit API wrapper [PRAW](https://praw.readthedocs.io/en/latest). Now of the litany of biases that this introduces, one of these is that r/Conservative has approximately 3x the subscribers as r/Liberal does, introducing a significant difference in the quality of the data that we can get from each subreddit. The smaller size of r/Liberal means that we have to comb further back in time to get a comparable amount of data as we can from r/Conservative, meaning we may simply be modelling a topical difference rather than what we actually want to model: the difference between the way each party uses language to approach a problem. While having an unbalanced dataset is definitely a problem we may have to tackle, it may be worth controlling for the date a comment was posted. Aside from this, we make another potentially deadly assumption: that only conservatives post on r/Conservative and only liberals post on r/Liberal. We can potentially alleviate the severity of this problem by introducing a threshold of the amount of upvotes a coment gets before we include it in the data, relying on the majority of the _voters_ of each subreddit to be the political affiliation of the subreddit they are in, which seems like a much more reasonable assumption. The code for the PRAW scraper is included in the github repository for this post [here](https://github.com/liamge/PoliData/tree/master). For the sake of this post I'll assume you've ran the scraper on both subreddits and so have two csvs that we'll use as our data.
 
 # Exploration
 
@@ -49,7 +49,7 @@ All that extra syntax there is so we can count these labels in their current for
 
 # Preprocessing
 
-If you've never used sklearn's transformers, essentially they are objects that have both a `fit` and `transform` method in them which transforms your data into a new format. More concretely, say we wanted to binarize our labels so our algorithm can properly use them. We would use sklearn's LabelBinarizer transformer like so:
+If you've never used sklearn's transformers, essentially they are objects that have both a `fit` and `transform` method in them which transforms your data into a new format. More concretely, say we wanted to binarize our labels so our algorithm can properly use them. We would use sklearn's `LabelBinarizer` transformer like so:
 
 ```
 from sklearn.preprocessing import LabelBinarizer
@@ -64,7 +64,7 @@ print(y[:10])
 
 We can see that the variable `y` now contains the binarized form of our 'label' column in the dataframe. Pretty easy stuff, but now we can move on to the 'text' column. Notice the `reshape` line; that will help when we use cross validation in sklearn.
 
-This column poses a couple interesting challenges to us, the first of us is how do we want our text formatted? In NLP there are a ton of different ways to represent text, but they all start with simple tokenization. Sklearn provites several options for text transformers, but sometimes they take care of too many stages in preprocessing at once. For example, sklearn's `CountVectorizer` tokenizes the data and transforms it into what's called a "one hot" representation. A "one hot" representation assigns each unique word in the corpus's vocabulary, V,  an index, and then represents a sentence as a vector of |V| dimensionality, where the i'th index of that vector is the count of the word with the i'th index in that sentence. While super convenient if you're going to use that form of representation, it doesn't give us just the tokenized form of the text if we need that for an alternative representation (which we may in a separate post). So let's write our own simple Tokenizer transformer such that it can be used exactly like other sklearn transformers. In order to do so, we need to create on object, `Tokenizer`, that inherets properties from sklearn's BaseEstimator and TransformerMixin classes. All we need to do is write `fit()` and `transform()` methods in our class, and inheriting from TransformerMixin gives us `fit_transform()` for free. Similarly, BaseEstimator gives us `get_params()` and `set_params()`, which are both useful for hyperparameter tuning. (All of this information I learned from Aurelien Geron's (no relation) fantastic book (Hands-On Machine Learning with Scikit-Learn and Tensorflow)[https://www.amazon.com/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1491962291])
+This column poses a couple interesting challenges to us, the first of us is how do we want our text formatted? In NLP there are a ton of different ways to represent text, but they all start with simple tokenization. Sklearn provites several options for text transformers, but sometimes they take care of too many stages in preprocessing at once. For example, sklearn's `CountVectorizer` tokenizes the data and transforms it into what's called a "one hot" representation. A "one hot" representation assigns each unique word in the corpus's vocabulary, V,  an index, and then represents a sentence as a vector of |V| dimensionality, where the i'th index of that vector is the count of the word with the i'th index in that sentence. While super convenient if you're going to use that form of representation, it doesn't give us just the tokenized form of the text if we need that for an alternative representation (which we may in a separate post). So let's write our own simple Tokenizer transformer such that it can be used exactly like other sklearn transformers. In order to do so, we need to create on object, `Tokenizer`, that inherets properties from sklearn's BaseEstimator and TransformerMixin classes. All we need to do is write `fit()` and `transform()` methods in our class, and inheriting from TransformerMixin gives us `fit_transform()` for free. Similarly, BaseEstimator gives us `get_params()` and `set_params()`, which are both useful for hyperparameter tuning. (All of this information I learned from Aurelien Geron's (no relation) fantastic book [Hands-On Machine Learning with Scikit-Learn and Tensorflow](https://www.amazon.com/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1491962291))
 
 ```
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -94,7 +94,7 @@ tk = Tokenizer()
 tokenized = tk.fit_transform(df.copy()['text'].values)
 ```
 
-We will use that format of creating our own custom transformers in a future post when we start moving towards more complex solutions, but for our quick analysis right now lets use a simple (bag-of-words)[https://en.wikipedia.org/wiki/Bag-of-words_model] to represent our text so we can see how our models will do on this task.
+We will use that format of creating our own custom transformers in a future post when we start moving towards more complex solutions, but for our quick analysis right now lets use a simple [bag-of-words](https://en.wikipedia.org/wiki/Bag-of-words_model) to represent our text so we can see how our models will do on this task.
 
 ```
 from sklearn.pipeline import Pipeline
@@ -108,7 +108,7 @@ text_pipeline = Pipeline([
 X = text_pipeline.fit_transform(df.copy()['text'])
 ```
 
-Our variable `X` should now be a scipy sparse matrix representing our data. If you're unfamiliar with what (TFIDF)[https://en.wikipedia.org/wiki/Tf%E2%80%93idf] is, it essentially weights words based upon their relative frequency, theoretically weighting more "important" words higher than less "important" words.
+Our variable `X` should now be a scipy sparse matrix representing our data. If you're unfamiliar with what [TFIDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) is, it essentially weights words based upon their relative frequency, theoretically weighting more "important" words higher than less "important" words.
 
 Before we inspect the data too much, let's break this up into train and test data so we don't cheat.
 
@@ -163,7 +163,7 @@ for classifier in classifiers:
 print(list(zip(names, scores)))
 ```
 
-Ok, maybe more than just a couple. Warning, this block of code is going to take a long time to run because you're training 10 different models on the data 3 times each (due to cross validation). It may be advisable to reduce the dimensionality of the data via something like Truncated SVD (as opposed to PCA because we have sparse input, plus if we perform SVD on a TDIFT weight matrix we get (Latent Semantic Analysis)[https://en.wikipedia.org/wiki/Latent_semantic_analysis]).
+Ok, maybe more than just a couple. Warning, this block of code is going to take a long time to run because you're training 10 different models on the data 3 times each (due to cross validation). It may be advisable to reduce the dimensionality of the data via something like Truncated SVD (as opposed to PCA because we have sparse input, plus if we perform SVD on a TDIFT weight matrix we get [Latent Semantic Analysis](https://en.wikipedia.org/wiki/Latent_semantic_analysis)).
 
 Just replace the `for` loop with this:
 
@@ -216,7 +216,7 @@ plt.xlabel('actual')
 plt.title('QDA Matrix')
 ```
 
-Again, if your data is like mine you'll see that they each have particular strengths and weaknesses. QDA seems to be much better at predicting true conservatives, but the tradeoff is that it seems to predict that most things are conservative. This is the _precision_ vs. _recall_ tradeoff. QDA seems to have very good _recall_, but pretty awful _precision_. We may be able to leverage both model's strengths and aleviate their weaknesses by ensembling them. In order to do that, let's inspect some other promising models. In particular, some more powerful models can be useful with some proper hyperparameter tuning and fidgeting despite their current performance. Let's focus in on (Extreme Gradient Boosting)[http://xgboost.readthedocs.io/en/latest/model.html], an extremely powerful model that seems to be performing pretty poorly. First, let's see how it predicts on our dataset as is.
+Again, if your data is like mine you'll see that they each have particular strengths and weaknesses. QDA seems to be much better at predicting true conservatives, but the tradeoff is that it seems to predict that most things are conservative. This is the _precision_ vs. _recall_ tradeoff. QDA seems to have very good _recall_, but pretty awful _precision_. We may be able to leverage both model's strengths and aleviate their weaknesses by ensembling them. In order to do that, let's inspect some other promising models. In particular, some more powerful models can be useful with some proper hyperparameter tuning and fidgeting despite their current performance. Let's focus in on [Extreme Gradient Boosting](http://xgboost.readthedocs.io/en/latest/model.html), an extremely powerful model that seems to be performing pretty poorly. First, let's see how it predicts on our dataset as is.
 
 ```
 xgb_clf = XGBClassifier()
@@ -233,7 +233,7 @@ plt.title('XGB Matrix')
 print("F1 score: {}".format(f1_score(preds, y_res)))
 ```
 
-Not great. It actually almost never predicts that a comment is made by a liberal. Let's see if we can alleviate this problem using a technique known as (Oversampling)[http://contrib.scikit-learn.org/imbalanced-learn/auto_examples/over-sampling/plot_random_over_sampling.html], which randomly samples our minority class in order to balance the dataset. More specifically we're using a variant called (SMOTE)[http://contrib.scikit-learn.org/imbalanced-learn/generated/imblearn.over_sampling.SMOTE.html]
+Not great. It actually almost never predicts that a comment is made by a liberal. Let's see if we can alleviate this problem using a technique known as [Oversampling](http://contrib.scikit-learn.org/imbalanced-learn/auto_examples/over-sampling/plot_random_over_sampling.html), which randomly samples our minority class in order to balance the dataset. More specifically we're using a variant called [SMOTE](http://contrib.scikit-learn.org/imbalanced-learn/generated/imblearn.over_sampling.SMOTE.html).
 
 ```
 from imblearn.over_sampling import SMOTE
