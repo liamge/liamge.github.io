@@ -2,4 +2,4 @@ My research focuses on primarily the fields of Computational Semantics, Natural 
 
 I have experience in the professional sphere creating novel NLP algorithms and production-ready code for a downstream application, as well as building chatbots using existing frameworks such as wit.ai.
 
-In my free time I like to explore smaller NLP projects that I'll also post on this website. Recently, I have done an analysis of the difference between Conservative and Liberal posts on Reddit, analyzed what makes a good Bachelorette contestant, and built a self-driving RC. All these projects will be posted on this website once I finish writing the actual blog posts.
+In my free time I like to explore smaller NLP projects that I'll also post on this website. Recently, I have done an analysis of the difference between Conservative and Liberal posts on Reddit, implemented several famous Deep Learning/NLP papers, analyzed what makes a good Bachelorette contestant, and built a self-driving RC. All these projects will be posted on this website once I finish writing the actual blog posts.
