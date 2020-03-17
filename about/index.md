@@ -2,4 +2,4 @@ My research focuses on primarily the fields of Computational Semantics, Natural 
 
 I have experience in the professional sphere creating novel NLP algorithms and production-ready code for a downstream application, as well as building chatbots using existing frameworks such as wit.ai.
 
-In my free time I like to make dumb games and (hopefully) not dumb music.
+In my free time I like to make dumb games and (hopefully) not dumb music. Games were mostly made in weekend long game jams, check them out [here](https://itch.io/profile/nunfuel).
