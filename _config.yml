@@ -1,6 +1,7 @@
 theme: jekyll-theme-slate
-title: 'NLP by Your Friend Liam'
+title: Liam Geron
 author: Liam Geron
+description: Senior data science specialist focused on machine learning, NLP, LLM systems, and production decision intelligence.
 paginate: 3
 markdown: kramdown
 permalink: /blog/:year/:month/:day/:title

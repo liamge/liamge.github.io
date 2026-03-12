@@ -1,38 +1,51 @@
 <!DOCTYPE html>
-	<html>
-		<head>
-			<title>{{ page.title }}</title>
-			<!-- link to main stylesheet -->
-			<link rel="stylesheet" type="text/css" href="/css/main.css">
-		</head>
-		<body>
-			<nav>
-	    		<ul>
-	        		<li><a href="/">Home</a></li>
-		        	<li><a href="/about">About</a></li>
-	        		<li><a href="/resume">Resume</a></li>
-	        		<li><a href="/blog">Blog</a></li>
-	    		</ul>
-			</nav>
-			<div class="container">
-			
-			{{ content }}
-			
-			</div><!-- /.container -->
-			<footer>
-	    		<ul>
-	        		<li><a href="mailto:liams.geron@gmail.com">email</a></li>
-	        		<li><a href="https://github.com/liamge/liamge.github.io">github.com/liamge/liamge.github.io</a></li>
-				</ul>
-			</footer>
-			{% include analytics.html %}
-		</body>
-	</html>
-<!--
-YOUVE SOLVED MY HTML PUZZLE
-   / \__
-  (    @\___
-  /         O
- /   (_____/
-/_____/   U
--->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+    <meta
+      name="description"
+      content="{{ page.description | default: site.description | default: 'Portfolio site for Liam Geron, machine learning and data science practitioner.' }}"
+    />
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-shell header-inner">
+        <a class="brand" href="/">
+          <span class="brand-name">Liam Geron</span>
+          <span class="brand-role">Machine Learning • NLP • Production Data Science</span>
+        </a>
+        <nav aria-label="Primary navigation">
+          <ul class="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/projects">Projects</a></li>
+            <li><a href="/resume">Resume</a></li>
+            <li><a href="/blog">Writing</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-shell main-content">
+      {{ content }}
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-shell footer-inner">
+        <div>
+          <strong>Liam Geron</strong>
+          <p class="footer-copy">Senior data science and machine learning specialist focused on decision systems, LLM applications, and business-facing ML products.</p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="mailto:liams.geron@gmail.com">Email</a></li>
+          <li><a href="https://github.com/liamge">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/">LinkedIn</a></li>
+        </ul>
+      </div>
+    </footer>
+    {% include analytics.html %}
+  </body>
+</html>

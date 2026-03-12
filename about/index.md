@@ -1,5 +1,32 @@
-My research focused on primarily the fields of Computational Semantics, Natural Language Understanding, and Deep Learning and Neural Networks for NLP. My thesis focuses on training a syntactically motivated semantic composition function via the use of [Recursive Neural Networks](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.383.1327&rep=rep1&type=pdf) to allow for a length agnostic semantic vector-space rather than the word level vector-space of other algorithms. To read more about this research, you can download my thesis [here](https://academicworks.cuny.edu/gc_etds/2875/). The acompanying code for this thesis can be found [here](https://github.com/liamge/Pytorch_ReNN).
+---
+layout: default
+title: About
+description: About Liam Geron.
+---
+<div class="content-page">
 
-I have experience in the professional sphere where I have worked as a Data Scientist for [Chatdesk](https://www.chatdesk.com/) for 2 years. Through this experience I have created bespoke inferential models for downstream NLP tasks, as well as designed and implemented those downstream applications. I additionally have worked with and maintained many critical relational and non-relational databases. Before that I was on the Labs team of [Transcendent Endeavors](https://transcendentendeavors.com/) researching novel algorithms for blending language pairs in order to aid language acquisition.
+# About
 
-In my free time I am a professional piano teacher as well specializing in jazz piano and theory. Music can be found [here](https://www.youtube.com/channel/UCwwHU6Do8GBxRHXCMIr44fg) and if you're interested in lessons you can reach out to me [here](https://www.wyzant.com/Tutors/LiamGMusic).
+I am a senior data science specialist with a background in machine learning, NLP, and business-facing analytics systems. My work sits at the intersection of technical modeling and operational decision-making: I enjoy building systems that are rigorous enough for technical teams and clear enough to be useful to business stakeholders.
+
+My recent work has focused on production-oriented ML, including predictive modeling, LLM applications, experimentation workflows, and reporting layers that help teams understand what a model is saying and what to do next.
+
+Earlier in my career, my research focused on computational semantics, neural approaches to language understanding, and representation learning. That foundation still shapes how I think about modern NLP and LLM systems.
+
+## Areas of focus
+
+- Production machine learning and model deployment
+- NLP, LLM applications, and retrieval workflows
+- Predictive modeling and decision support systems
+- Model interpretability, monitoring, and executive reporting
+- Applied analytics that connect technical outputs to business outcomes
+
+## Professional background
+
+I currently work in data science with a focus on predictive modeling and AI-driven systems. Across my work, I have built and maintained machine learning workflows, downstream NLP applications, and data products designed to support operational and strategic decisions.
+
+## Outside of work
+
+Outside of data science, I am deeply interested in music, synthesis, and creative technology. I also enjoy building and designing things across code, audio, and hardware.
+
+</div>
