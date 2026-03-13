@@ -3,9 +3,9 @@ layout: default
 title: Resume
 description: Resume for Liam Geron.
 ---
-<div class="content-page">
+<div class="content-page" markdown="1">
 
-# Resume
+<h1>Resume</h1>
 
 You can view or download my current resume below.
 

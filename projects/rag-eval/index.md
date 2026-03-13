@@ -3,7 +3,7 @@ layout: default
 title: RAG Evaluation Workbench
 description: Retrieval-augmented generation evaluation framework.
 ---
-<div class="content-page">
+<div class="content-page" markdown="1">
 
 # RAG Evaluation Workbench
 
@@ -23,6 +23,11 @@ RAG systems are often judged informally. This project explores a more structured
 ## Why it matters
 
 Strong LLM applications require more than prompting. They need measurable evaluation and clear reporting so teams can tell whether a system is actually improving.
+
+## Outcomes (add your metrics)
+
+- <em>Placeholder:</em> summarize evaluation deltas (e.g., groundedness, faithfulness, retrieval hit rate) across variants.
+- <em>Placeholder:</em> capture operational wins (e.g., faster experiment cycles, clearer acceptance criteria for releases).
 
 ## Stack
 

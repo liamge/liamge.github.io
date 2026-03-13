@@ -3,7 +3,7 @@ layout: default
 title: About
 description: About Liam Geron.
 ---
-<div class="content-page">
+<div class="content-page" markdown="1">
 
 # About
 

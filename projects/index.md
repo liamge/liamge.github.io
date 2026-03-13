@@ -3,7 +3,7 @@ layout: default
 title: Projects
 description: Selected machine learning and NLP projects by Liam Geron.
 ---
-<div class="content-page">
+<div class="content-page" markdown="1">
 
 # Projects
 

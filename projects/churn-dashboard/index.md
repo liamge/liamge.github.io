@@ -3,7 +3,7 @@ layout: default
 title: Customer Churn Intelligence Dashboard
 description: A production-style customer churn prediction and reporting system.
 ---
-<div class="content-page">
+<div class="content-page" markdown="1">
 
 # Customer Churn Intelligence Dashboard
 
@@ -26,6 +26,11 @@ Many churn projects stop at model training. This project was designed to go furt
 ## Why it matters
 
 The central idea is not only to predict churn, but to translate model output into action. The dashboard emphasizes revenue at risk, customer prioritization, and explanation of the main drivers of risk.
+
+## Outcomes (add your metrics)
+
+- <em>Placeholder:</em> cite uplift/precision-recall results and a business-facing metric (e.g., accounts retained, ARR protected).
+- <em>Placeholder:</em> note any latency/throughput constraints met for scoring and dashboard refresh.
 
 ## Stack
 
