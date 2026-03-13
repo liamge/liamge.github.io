@@ -7,37 +7,59 @@ description: A production-style customer churn prediction and reporting system.
 
 # Customer Churn Intelligence Dashboard
 
-A production-style portfolio project that treats churn prediction as a business system rather than just a classification notebook.
+Retention Risk Workbench: a production-style churn prediction system that ships a scoring API, evaluation artifacts, and an interactive dashboard for business and technical stakeholders.
 
-## Problem
+## Snapshot
 
-Many churn projects stop at model training. This project was designed to go further: train candidate models, tune a champion, package the model for deployment, and present results in a dashboard that serves both technical and non-technical stakeholders.
+- Champion model: logistic regression (Telco churn baseline)  
+- Test set: ROC-AUC 0.846, PR-AUC 0.670, F1 0.620, recall 0.786 at threshold 0.253 (positive rate 0.409)  
+- Candidates: XGBoost runner-up within 1% ROC-AUC  
+- Stack: Python, scikit-learn, SHAP, MLflow, FastAPI, Streamlit  
+- Assets: metrics, SHAP tables, comparison charts, latest predictions, causal uplift tables
 
-## What it includes
+## Product Story
 
-- Feature engineering for churn risk modeling
-- Candidate model training and selection
-- MLflow experiment tracking
-- Bayesian hyperparameter tuning with Optuna
-- SHAP-based feature interpretation
-- Prediction packaging for business users
-- Streamlit dashboard with technical and executive views
+Many churn efforts end at a notebook. This workbench carries the model through feature engineering, model selection, explainability, API packaging, and a dashboard that surfaces both revenue risk and model quality. It is built to be refreshed after every training run so the dashboard and API stay in sync with the latest artifacts.
 
-## Why it matters
+## Dashboard Views
 
-The central idea is not only to predict churn, but to translate model output into action. The dashboard emphasizes revenue at risk, customer prioritization, and explanation of the main drivers of risk.
+- Executive Summary: high-risk counts, revenue-at-risk roll-up, recommended actions, driver themes grouped from SHAP.  
+- Technical Performance: ROC/PR/calibration/confusion plots, SHAP feature importance, full model metadata.  
+- Model Comparison: side-by-side metrics for logistic regression vs XGBoost with metric selector.  
+- High-Risk Customers: top 25 customers with probabilities, driver themes, and action guidance.  
+- Causal Uplift: optional uplift curve, Qini, and budget-aware policy recommendations.
 
-## Outcomes (add your metrics)
+## Data & Features
 
-- <em>Placeholder:</em> cite uplift/precision-recall results and a business-facing metric (e.g., accounts retained, ARR protected).
-- <em>Placeholder:</em> note any latency/throughput constraints met for scoring and dashboard refresh.
+Built on the IBM Telco churn schema plus engineered signals such as price ratio, revenue risk proxy, service adoption rate, contract/payment flags (auto-pay, electronic check, paperless), tenure groups, streaming/support usage, and customer lifecycle stages. Feature themes are mapped to business-friendly buckets (Billing & Contract, Pricing & Value, Product Usage, Support & Protection, Customer Lifecycle/Profile) for storytelling in the dashboard.
 
-## Stack
+## Modeling Approach
 
-Python, scikit-learn, XGBoost, Optuna, MLflow, FastAPI, Streamlit, SHAP
+- Trains logistic regression and (when available) XGBoost; tunes threshold on dev F1 and selects a champion.  
+- Stores metrics and comparison table in `artifacts/metrics.json` and `artifacts/candidate_model_results.csv`.  
+- Generates SHAP global importance and evaluation figures for dashboard ingestion.  
+- Risk tiers and recommended actions are defined in the FastAPI service (`api/main.py`) so scoring and UI stay consistent.
 
-## Status
+## Delivery & Ops
 
-This project is being developed as a polished public portfolio piece. A live demo link and GitHub repository can be added here.
+- Streamlit UI: `dashboard/app.py` reads the latest artifacts and `data/predictions/*.csv`.  
+- Scoring API: FastAPI in `api/main.py`, returning probability, risk tier, and action guidance.  
+- Training pipeline: `src/train.py` with config-driven splits and preprocessing; outputs champion model to `artifacts/model.pkl`.  
+- Causal uplift (optional): `artifacts/causal/` holds uplift tables and budget-aware policy recommendations.
+
+## Run It Locally
+
+```bash
+cd retention-risk-workbench
+pip install -r requirements.txt
+python src/train.py --config configs/base.yaml   # train + export artifacts
+streamlit run dashboard/app.py                   # open the dashboard
+```
+
+## What to Extend Next
+
+- Add ARR-at-risk calculation by blending churn probability with contract value.  
+- Swap in a gradient-boosted or calibrated model and re-run threshold tuning.  
+- Connect the FastAPI scoring endpoint to the dashboard for live inference instead of batch CSVs.
 
 </div>
