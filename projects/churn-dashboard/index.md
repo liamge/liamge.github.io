@@ -11,6 +11,11 @@ description: A production-style customer churn prediction, scoring, and reportin
   <p class="project-lead">An end-to-end churn intelligence system designed to identify at-risk customers, expose model reasoning, and deliver retention insights through a scoring API and business-facing dashboard.</p>
 </div>
 
+<div class="button-row project-actions">
+  <a class="button" href="https://retention-risk-workbench.streamlit.app/" target="_blank" rel="noopener">Launch live Streamlit app</a>
+  <a class="button-secondary" href="https://github.com/liamge/retention-risk-workbench.git" target="_blank" rel="noopener">View GitHub repo</a>
+</div>
+
 <div class="proof-strip hero-proof">
   <span>ROC-AUC 0.846</span>
   <span>PR-AUC 0.670</span>

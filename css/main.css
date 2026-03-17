@@ -524,6 +524,10 @@ section {
   margin-bottom: 1.5rem;
 }
 
+.project-actions {
+  margin: 1.1rem 0 1.75rem;
+}
+
 .eyebrow,
 .card-kicker {
   display: inline-flex;
