@@ -12,8 +12,8 @@ description: A decision-focused causal ML case study for uplift estimation, budg
 </div>
 
 <div class="button-row project-actions">
-  <a class="button" href="https://github.com/liamge/causal-uplift-roi-dashboard" target="_blank" rel="noopener">View GitHub repo</a>
-  <a class="button-secondary" href="#" rel="noopener">Add live demo link</a>
+  <a class="button" href="https://github.com/liamge/causal-uplift-modeling" target="_blank" rel="noopener">View GitHub repo</a>
+  <a class="button-secondary" href="https://causal-uplift-modeling.streamlit.app/" target="_blank" rel="noopener">Open live Streamlit app</a>
 </div>
 
 <div class="proof-strip hero-proof">
