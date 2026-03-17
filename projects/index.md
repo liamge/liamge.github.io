@@ -7,7 +7,7 @@ description: Selected machine learning, retrieval, and decision intelligence pro
 
 # Projects
 
-A selection of portfolio projects focused on production-minded machine learning, retrieval systems, model evaluation, and decision support.
+A selection of portfolio projects focused on production-minded machine learning, retrieval systems, causal modeling, model evaluation, and decision support.
 
 <div class="project-feature">
   <div>
@@ -29,6 +29,23 @@ A selection of portfolio projects focused on production-minded machine learning,
 </div>
 
 <div class="grid-2">
+  <article class="project-card card">
+    <p class="eyebrow">Decision intelligence</p>
+    <h3>Causal Uplift Modeling + ROI Dashboard</h3>
+    <p class="project-meta">
+      Decision-focused causal ML system that estimates incremental treatment impact, optimizes targeting depth under budget constraints, and delivers ROI-based recommendations through an interactive dashboard.
+    </p>
+    <p class="proof-strip">Proof: T-Learner uplift modeling · policy curve optimization · Qini/decile evaluation · Streamlit scenario analysis</p>
+    <div class="tag-row">
+      <span class="tag">Python</span>
+      <span class="tag">scikit-learn</span>
+      <span class="tag">Causal ML</span>
+      <span class="tag">Streamlit</span>
+      <span class="tag">Plotly</span>
+    </div>
+    <p><a href="/projects/causal-uplift-roi">Read the case study</a></p>
+  </article>
+
   <article class="project-card card">
     <p class="eyebrow">Retrieval + LLM systems</p>
     <h3>Grounded Conversation RAG</h3>
