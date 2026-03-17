@@ -43,7 +43,7 @@ A selection of portfolio projects focused on production-minded machine learning,
       <span class="tag">Streamlit</span>
       <span class="tag">Plotly</span>
     </div>
-    <p><a href="/projects/causal-uplift-roi">Read the case study</a></p>
+    <p><a href="/projects/causal-uplift-modeling">Read the case study</a></p>
   </article>
 
   <article class="project-card card">
