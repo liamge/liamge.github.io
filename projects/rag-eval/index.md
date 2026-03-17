@@ -9,6 +9,8 @@ description: Hybrid retrieval system with grounded answers, citations, abstentio
 
 A production-style retrieval-augmented generation system for answering questions over internal-style knowledge sources such as policies, operations documents, and support conversations. The project combines lexical, dense, and hybrid retrieval with grounded answer generation, citations, abstention safeguards, evaluation benchmarks, and telemetry surfaced through both a FastAPI service and a Streamlit interface.
 
+> Live demo: [grounded-conversation-rag.streamlit.app](https://grounded-conversation-rag.streamlit.app) · Source: [github.com/liamge/grounded-conversation-rag](https://github.com/liamge/grounded-conversation-rag)
+
 <div class="metric-grid">
   <div class="metric-card">
     <div class="metric-value">4 retrieval modes</div>
