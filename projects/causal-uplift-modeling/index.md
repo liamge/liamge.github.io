@@ -96,8 +96,8 @@ This project reframes the problem around **incremental impact**.
 
 The core modeling idea is simple but powerful: estimate two probabilities for each customer and compare them.
 
-- **P(conversion | treated)** estimates expected response if the customer is contacted or offered treatment.  
-- **P(conversion | control)** estimates expected response without intervention.  
+- **P(conversion \\| treated)** estimates expected response if the customer is contacted or offered treatment.  
+- **P(conversion \\| control)** estimates expected response without intervention.  
 - **Predicted uplift** is the difference between those two values.
 
 This project uses a **T-Learner** structure with paired Random Forest classifiers. That keeps the implementation approachable while still demonstrating real treatment-effect estimation logic. It also makes the project more useful as a portfolio piece because the causal framing is explicit and directly tied to action.
