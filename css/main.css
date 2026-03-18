@@ -151,7 +151,7 @@ section {
 }
 
 section:first-of-type {
-  margin-top: 1.5rem;
+  margin-top: 0;
 }
 
 .hero {
