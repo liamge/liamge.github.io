@@ -1,7 +1,7 @@
 :root {
   --bg: #ffffff;
-  --ink: #293f14;
-  --muted: #4b5f3a;
+  --ink: #000000;
+  --muted: #4a4a4a;
   --panel: #ffffff;
   --panel-soft: #eaf4fb;
   --stroke: #d6e5f3;
@@ -418,7 +418,7 @@ section:first-of-type {
 .content-page p,
 .content-page li {
   font-size: 1.04rem;
-  color: #111827;
+  color: var(--ink);
 }
 
 .content-page ul {
@@ -450,7 +450,7 @@ section:first-of-type {
 }
 
 .site-footer {
-  background: linear-gradient(135deg, #003f91, #293f14);
+  background: #003f91;
   color: #f0f5ff;
   border-top: 1px solid rgba(240, 245, 255, 0.12);
   margin-top: 4rem;
